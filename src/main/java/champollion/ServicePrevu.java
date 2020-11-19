@@ -38,5 +38,8 @@ public class ServicePrevu {
         this.volumeCM = volumeCM;
     }
 
-    
+    @Override
+    public String toString() {
+        return "heures de TP : " + getVolumeTP() + ", heures de TD : " + getVolumeTD() + ", heures de CM : " + getVolumeCM();
+    }
 }

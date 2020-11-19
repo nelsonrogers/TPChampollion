@@ -11,13 +11,12 @@ public class Enseignant extends Personne {
 
     // hashmap avec l'UE et le nombre d'heures associées
     private final HashMap<UE, HashMap<TypeIntervention, Integer>> hashmap = new HashMap<>();
-    private final Set<Intervention> myInterventions;
+    private final Set<Intervention> myInterventions = new HashSet<>();;
     private final ServicePrevu myService = new ServicePrevu(0, 0, 0);
 
     public Enseignant(String nom, String email) {
         
         super(nom, email);
-        this.myInterventions = new HashSet<>();
         
     }
 
@@ -37,6 +36,14 @@ public class Enseignant extends Personne {
         
         return nb_heures_totales;
         
+    }
+
+    public Set<Intervention> getMyInterventions() {
+        return myInterventions;
+    }
+
+    public ServicePrevu getMyService() {
+        return myService;
     }
 
     /**
