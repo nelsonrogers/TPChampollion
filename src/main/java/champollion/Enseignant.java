@@ -1,11 +1,24 @@
 package champollion;
 
-public class Enseignant extends Personne {
+import static java.lang.Math.round;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
-    // TODO : rajouter les autres méthodes présentes dans le diagramme UML
+
+public class Enseignant extends Personne {
+    
+
+    // hashmap avec l'UE et le nombre d'heures associées
+    private final HashMap<UE, HashMap<TypeIntervention, Integer>> hashmap = new HashMap<>();
+    private final Set<Intervention> myInterventions;
+    private final ServicePrevu myService = new ServicePrevu(0, 0, 0);
 
     public Enseignant(String nom, String email) {
+        
         super(nom, email);
+        this.myInterventions = new HashSet<>();
+        
     }
 
     /**
@@ -17,8 +30,13 @@ public class Enseignant extends Personne {
      *
      */
     public int heuresPrevues() {
-        // TODO: Implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        
+        int nb_heures_totales = 0;
+        nb_heures_totales = 
+                hashmap.keySet().stream().map(ue -> heuresPrevuesPourUE(ue)).map(nb_heures -> nb_heures).reduce(nb_heures_totales, Integer::sum);
+        
+        return nb_heures_totales;
+        
     }
 
     /**
@@ -31,8 +49,14 @@ public class Enseignant extends Personne {
      *
      */
     public int heuresPrevuesPourUE(UE ue) {
-        // TODO: Implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
+        
+            HashMap<TypeIntervention, Integer> myHours = hashmap.get(ue);
+            float heuresCM = myHours.get(TypeIntervention.CM) * 1.5f;
+            int heuresTD = myHours.get(TypeIntervention.TD);
+            float heuresTP = myHours.get(TypeIntervention.TP) * 0.75f;
+            int nb_heures = round(heuresCM + heuresTD + heuresTP);
+            
+            return nb_heures;
     }
 
     /**
@@ -44,8 +68,44 @@ public class Enseignant extends Personne {
      * @param volumeTP le volume d'heures de TP
      */
     public void ajouteEnseignement(UE ue, int volumeCM, int volumeTD, int volumeTP) {
-        // TODO: Implémenter cette méthode
-        throw new UnsupportedOperationException("Pas encore implémenté");
-    }
+        
+            myService.setVolumeTP(myService.getVolumeTP() + volumeTP);
+            myService.setVolumeTD(myService.getVolumeTD() + volumeTD);
+            myService.setVolumeCM(myService.getVolumeCM() + volumeCM);
 
+            if (hashmap.get(ue) == null) {
+                HashMap<TypeIntervention, Integer> myHours = new HashMap<>();
+                myHours.put(TypeIntervention.TP, volumeTP);
+                myHours.put(TypeIntervention.TD, volumeTD);
+                myHours.put(TypeIntervention.CM, volumeCM);
+                hashmap.put(ue, myHours);
+            }
+            else {
+                HashMap<TypeIntervention, Integer> myHours = hashmap.get(ue);
+                myHours.put(TypeIntervention.CM, myHours.get(TypeIntervention.CM) + volumeCM);
+                myHours.put(TypeIntervention.TD, myHours.get(TypeIntervention.TD) + volumeTD);
+                myHours.put(TypeIntervention.TP, myHours.get(TypeIntervention.TP) + volumeTP);
+                hashmap.put(ue, myHours);
+            }
+            
+    }
+    
+    
+    public void ajouteIntervention(Intervention e) {
+            myInterventions.add(e);
+    }
+    
+    public int heuresPlanifiees() {
+            int heuresPlanifiees = 0;
+            for (Intervention intervention : myInterventions) {
+                heuresPlanifiees += intervention.getDuree();
+            }
+            return heuresPlanifiees;
+        
+    }
+    
+    public boolean enSousService() {
+        return heuresPrevues() < heuresPlanifiees();
+    }
+    
 }

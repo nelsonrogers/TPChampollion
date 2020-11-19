@@ -28,6 +28,11 @@ public class ChampollionJUnitTest {
 
 		assertEquals(10, untel.heuresPrevuesPourUE(uml),
                         "L'enseignant doit maintenant avoir 10 heures prévues pour l'UE 'uml'");
+                
+                untel.ajouteEnseignement(java, 0, 10, 0);
+                
+                assertEquals(10 + 10, untel.heuresPrevues(),
+                        "L'enseignant doit maintenant avoir 20 heures de prévues");
 
                 // 20h TD pour UML
                 untel.ajouteEnseignement(uml, 0, 20, 0);
@@ -36,5 +41,9 @@ public class ChampollionJUnitTest {
                          "L'enseignant doit maintenant avoir 30 heures prévues pour l'UE 'uml'");		
 		
 	}
+        
+        
+        //@Test
+        //public void test
 	
 }
